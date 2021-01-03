@@ -1,5 +1,6 @@
 import axios from "axios";
 export const READ_EVENTS = "READ_EVENTS";
+export const CREATE_EVENTS = "CREATE_EVENTS";
 
 const ROOT_URL = "https://udemy-utils.herokuapp.com/api/v1";
 const QUERYSTRING = "?token=token123";
@@ -12,4 +13,12 @@ export const readEvents = () => async (dispath) => {
   // console.log(response);
 
   dispath({ type: READ_EVENTS, response }); //関数の中でdispath
+};
+
+export const postEvent = (values) => async (dispath) => {
+  //関数を返す
+  const response = await axios.post(`${ROOT_URL}/events${QUERYSTRING}`, values);
+  // console.log(response);
+
+  dispath({ type: CREATE_EVENTS, response }); //関数の中でdispath
 };

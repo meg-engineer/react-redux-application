@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 
 class EventsIndex extends Component {
   componentDidMount() {
+    //mount後にやりたい処理
     this.props.readEvents();
   }
 
@@ -33,7 +34,7 @@ class EventsIndex extends Component {
           <tbody>{this.renderEvents()}</tbody>
         </table>
 
-        <Link to="/events/new">NewEvent</Link>
+        <Link to="/events/new">New Event</Link>
       </>
     );
   }
