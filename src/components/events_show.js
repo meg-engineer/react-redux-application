@@ -12,6 +12,12 @@ class EventsShow extends Component {
     this.onDeleteClick = this.onDeleteClick.bind(this);
   }
 
+  componentDidMount() {
+    //mount後にやりたい処理
+    const { id } = this.props.match.params;
+    if (id) this.props.getEvent(id);
+  }
+
   renderField(field) {
     const {
       input,
@@ -35,12 +41,12 @@ class EventsShow extends Component {
   }
 
   async onSubmit(values) {
-    // await this.props.postEvent(values);
+    await this.props.putEvent(values);
     this.props.history.push("/");
   }
 
   render() {
-    const { handleSubmit, pristine, submitting } = this.props; //pristine:何も入力されていない状態 submitting:submitされたらtrueになる
+    const { handleSubmit, pristine, submitting, invalid } = this.props; //pristine:何も入力されていない状態 submitting:submitされたらtrueになる
 
     return (
       <form onSubmit={handleSubmit(this.onSubmit)}>
@@ -65,7 +71,7 @@ class EventsShow extends Component {
           <input
             type="submit"
             value="Submit"
-            disabled={pristine || submitting} //何も入力されていない、またはsubmitボタンが押されたあとはdisabled
+            disabled={pristine || submitting || invalid} //何も入力されていない、submitボタンが押されたあと、invalidはdisabled
           />
           <Link to="/">Cancel</Link>
           <Link to="/" onClick={this.onDeleteClick}>
@@ -85,9 +91,19 @@ const validate = (values) => {
   return errors;
 };
 
-const mapDispatchToProps = { deleteEvent };
+const mapStateToProps = (state, ownProps) => {
+  const event = state.events[ownProps.match.params.id];
+  return { initialValues: event, event }; //eventが返り、eventを渡す
+};
+
+const mapDispatchToProps = { getEvent, deleteEvent, putEvent };
 
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps
-)(reduxForm({ validate, form: "eventShowForm" })(EventsShow));
+)(
+  reduxForm({ validate, form: "eventShowForm", enableReinitialize: true })(
+    EventsShow
+  )
+);
+//enableReinitialize: trueにすると、initialValueが変わるたびにフォームが初期化される（defaultはfalseになっている）
